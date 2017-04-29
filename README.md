@@ -52,3 +52,26 @@ At last, we have one scenario left, the one in which no face is found in the cur
 
 # Part III
 
+Here’s main()!
+
+main() is pretty much straight forward. First of all we access the handle to access the video and iterate until there is frame left in the video. The counter i is used to decide the flow of the program i.e. initially i will be zero hence the first if condition will be satisfied and the program will proceed to find faces using Viola-Jones. In the case when faces are found the value of the counter i will be incremented which will ensure that in the next iteration we end up in the else part which is not showed in the above image.
+
+Inside the first if on line 141, we declare two empty two lists namely allRoiPts[] and allRoiHist[] to store the values returned by VJFindFace() and calHist() respectively in each iteration. They get reinitialized every iteration. First of all we check that whether any faces are found or not. If faces are found then we calculate the histogram of those faces and increment the counter i. If faces are not found then justShow() will simply skip processing SKIP number of frames and just show them as it is.
+
+Now if faces are found then the value of the counter i will be incremented which will ensure that we lend up in the else part.
+
+We call trackFace() function which will track the face for TRACK number of frames. It returns -1 indicating that there are no more frames left in the video. In such cases we terminate the execution of the program ahead. It will return 1 when it is successfully able to track the faces in the TRACK number of frames. I think rest all can be understood just by reading it.
+
+Finally there is one last thing remaining. We have all the functions ready with us. We just need to call the main() to get the program going.
+
+Coming back to the promise I made earlier. The reason for subtracting 10 and 15 is shown below. If you don’t subtract those numbers something similar to this might occur.
+
+The bounding box which we obtain also contains a small amount of background pixel. These pixels disturb the mean of the actual object which we want to track i.e. face in our case, leading to abnormal window sizes enclosing the faces. When we don’t decrease the size of the window, and find the histogram of the pixels lying inside the window and then try to back project them on the next frame, then the probability of finding the face region around the window in all direction will increase as we have considered the background pixel while generating the histogram. Thus CAMSHIFT generates a new window trying to encompass this region with maximum probability of finding the face which results in such erroneous outcome. Hence we need to further decrease the size of the enclosing window in such a manner that it discards as many unwanted pixels as possible and contains only the pixels of the object which we want to track. This helps in better histogram generation of the color of object which plays a crucial role in tracking the object.
+
+To err is human to forgive is divine! I might have made some mistake, feel free to correct me! Thanks for patiently following till the end.
+
+# References
+
+1. Viola, Paul, and Michael Jones. ”Rapid object detection using a boosted cascade of simple features.” Computer Vision and Pattern Recognition, 2001. CVPR 2001. Proceedings of the 2001 IEEE Computer Society Conference on. Vol. 1. IEEE, 2001.
+2. Viola, Paul, and Michael J. Jones. ”Robust real-time face detection.” International journal of computer vision 57.2 (2004): 137-154.
+3. Bradski, G.R., Real time face and object tracking as a component of a perceptual user interface, Applications of Computer Vision, 1998. WACV 98. Proceedings., Fourth IEEE Workshop on , vol., no., pp.214,219, 19-21 Oct 1998
